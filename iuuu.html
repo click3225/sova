@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>室内装修 - 移动端优化版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf5f5f5);
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.set(4, 3, 5);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  // 灯光
+  const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+  scene.add(light);
+
+  // 房间：6x4x6
+  const roomMaterial = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, side: THREE.BackSide });
+  const room = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), roomMaterial);
+  room.position.y = 2;
+  scene.add(room);
+
+  // 地板
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), floorMaterial);
+  floor.rotation.x = -Math.PI / 2;
+  scene.add(floor);
+
+  // 沙发
+  const sofa = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 0.8), new THREE.MeshStandardMaterial({ color: 0x795548 }));
+  sofa.position.set(0, 0.5, -1.5);
+  scene.add(sofa);
+
+  // 桌子
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.4, 1), new THREE.MeshStandardMaterial({ color: 0x333333 }));
+  table.position.set(0, 0.2, 1);
+  scene.add(table);
+
+  // 椅子
+  const chair = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.8, 0.7), new THREE.MeshStandardMaterial({ color: 0x1976d2 }));
+  chair.position.set(1.5, 0.4, 1.2);
+  scene.add(chair);
+
+  // 渲染循环
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+</body>
+</html>

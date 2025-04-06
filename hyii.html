@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>现代风格室内装修 - Three.js</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+  // 创建场景
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf0f0f0);
+
+  // 相机设置
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(2, 2, 5);
+
+  // 渲染器
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;  // 启用阴影
+  document.body.appendChild(renderer.domElement);
+
+  // 添加光源
+  const ambientLight = new THREE.AmbientLight(0x404040, 1); // 环境光
+  scene.add(ambientLight);
+
+  // 定向光（模拟阳光）
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(5, 10, 5).normalize();
+  directionalLight.castShadow = true;
+  scene.add(directionalLight);
+
+  // 创建 OrbitControls 控制器
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  // 创建材质加载器
+  const textureLoader = new THREE.TextureLoader();
+
+  // 地板材质（现代木纹）
+  const floorTexture = textureLoader.load('https://threejs.org/examples/textures/wood2.jpg');
+  const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture });
+
+  // 墙面材质（浅木纹）
+  const wallTexture = textureLoader.load('https://threejs.org/examples/textures/wood2.jpg');
+  const wallMaterial = new THREE.MeshStandardMaterial({ map: wallTexture });
+
+  // 创建房间（地板 + 墙壁 + 天花板）
+  const roomGeometry = new THREE.BoxGeometry(6, 4, 6);
+  const room = new THREE.Mesh(roomGeometry, wallMaterial);
+  room.position.y = 2;
+  scene.add(room);
+
+  // 地板（使用木纹材质）
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), floorMaterial);
+  floor.rotation.x = - Math.PI / 2;
+  floor.receiveShadow = true;  // 地板接受阴影
+  scene.add(floor);
+
+  // 天花板
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), wallMaterial);
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = 4;
+  scene.add(ceiling);
+
+  // 创建现代风格家具
+
+  // 沙发
+  const sofaMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+  const sofa = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 0.8), sofaMaterial);
+  sofa.position.set(0, 0.5, -1.5);
+  sofa.castShadow = true;  // 沙发投射阴影
+  scene.add(sofa);
+
+  // 现代桌子
+  const tableMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const table = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 1), tableMaterial);
+  table.position.set(0, 0.25, 1);
+  table.castShadow = true;  // 桌子投射阴影
+  table.receiveShadow = true;  // 桌子接受阴影
+  scene.add(table);
+
+  // 椅子
+  const chairMaterial = new THREE.MeshStandardMaterial({ color: 0x0066cc });
+  const chair = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1, 0.8), chairMaterial);
+  chair.position.set(1.5, 0.5, -1.5);
+  chair.castShadow = true;
+  scene.add(chair);
+
+  // 书架
+  const bookshelfMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+  const bookshelf = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 0.5), bookshelfMaterial);
+  bookshelf.position.set(-2, 1, -1.5);
+  bookshelf.castShadow = true;
+  scene.add(bookshelf);
+
+  // 灯具（台灯）
+  const lampMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+  const lampBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.5), lampMaterial);
+  lampBase.position.set(1, 1.25, -1.5);
+  lampBase.castShadow = true;
+  scene.add(lampBase);
+
+  const lampShade = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 }));
+  lampShade.position.set(1, 1.75, -1.5);
+  lampShade.castShadow = true;
+  scene.add(lampShade);
+
+  // 渲染函数
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();  // 更新控制器
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // 响应窗口变化
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+</body>
+</html>
